@@ -55,7 +55,7 @@ def weather_city(message, weather, now, week, day):
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     weath = re.compile("погод(а|у|е|ой|ы)")
-    if weath.match(message.text.lower()):
+    if re.search(weath, message.text.lower()):
         weather, city, now, week, day = parse_weather_request(message)
         if city is None:
             msg = bot.send_message(message.from_user.id, "В каком населенном пункте?")
@@ -64,7 +64,9 @@ def get_text_messages(message):
             output = weather.get_weather(weather._inflect(city, 'nomn'), now=now, week=week, day=day)
             bot.send_message(message.from_user.id, output)
             bot.send_message(message.from_user.id, "Чем я могу еще быть полезен?")
-
+    elif (("пока" in message.text.lower()) or ("свидан" in message.text.lower())):
+       bot.send_message(message.from_user.id, 'Всего хорошего и до новых встреч!')
+    
     else:
         def query(payload):
             response = requests.post(API_URL, headers=headers, json=payload)
